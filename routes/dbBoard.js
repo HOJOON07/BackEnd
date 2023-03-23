@@ -1,5 +1,9 @@
 const { signedCookie } = require('cookie-parser');
 const express = require('express');
+
+const multer = require('multer');
+const fs = require('fs');
+
 const {
   getAllArticles,
   writeArticle,
@@ -8,6 +12,34 @@ const {
   deleteArticle,
 } = require('../controllers/boardController');
 const router = express.Router();
+
+// 파일 업로드 설정
+const dir = './uploads';
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, dir);
+  },
+  filename: (req, file, callback) => {
+    callback(null, file.fieldname + '_' + Date.now());
+  },
+});
+// const upstorage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     callback(null, dir);
+//   },
+//   filename: (req, file, callback) => {
+//     callback(null, file.fieldname + '_' + Date.now());
+//   },
+// });
+
+const limits = {
+  fileSize: 1024 * 1024 * 2,
+};
+
+const upload = multer({ storage, limits });
+// const modifyUpload = multer({ upstorage, limits });
+
+if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
 //로그인 확인용 미들웨어
 const isLogin = (req, res, next) => {
@@ -29,11 +61,11 @@ router.get('/write', isLogin, (req, res) => {
 });
 
 // //데이터베이스에 추가
-router.post('/write', isLogin, writeArticle);
+router.post('/write', isLogin, upload.single('img'), writeArticle);
 
 // //수정 버튼 클릭후 수정페이지 get
 router.get('/modify/:id', isLogin, getArticle);
-router.post('/modify/:id', isLogin, modifyArticle);
+router.post('/modify/:id', isLogin, upload.single('img'), modifyArticle);
 router.delete('/delete/:id', isLogin, deleteArticle);
 
 // //글 삭제하기

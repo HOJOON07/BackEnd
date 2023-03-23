@@ -1,4 +1,5 @@
-const mongoClient = require('./mongoConnect');
+require('./mongooseConnect');
+const User = require('../models/user');
 
 const REGISTER_DUPLICATED_MSG =
   '동일한 ID를 가진 회원이 존재합니다!<br><a href="/register">회원가입으로 이동</a>';
@@ -9,14 +10,11 @@ const REGISTER_UNEXPECTED_MSG =
 
 const registerUser = async (req, res) => {
   try {
-    const client = await mongoClient.connect();
-    const user = client.db('kdt5').collection('user');
-
-    const duplicatedUser = await user.findOne({ id: req.body.id });
-    if (duplicatedUser) {
-      return res.status(400).send(REGISTER_DUPLICATED_MSG);
-    }
-    await user.insertOne(req.body);
+    // const duplicatedUser = await User.findOne({ id: req.body.id });
+    // if (duplicatedUser) {
+    //   return res.status(400).send(REGISTER_DUPLICATED_MSG);
+    // }
+    await User.create(req.body);
     res.status(200).send(REGISTER_SUCCES_MSG);
   } catch (err) {
     console.error(err);
@@ -24,33 +22,4 @@ const registerUser = async (req, res) => {
   }
 };
 
-// const userDB = {
-//   //중복 회원 찾기
-//   userCheck: async (userId) => {
-//     try {
-//       const client = await mongoClient.connect();
-//       const user = client.db('kdt5').collection('user');
-//       const findUser = await user.findOne({
-//         id: userId,
-//       });
-//       return findUser;
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   },
-
-//회원 가입 하기
-//   registerUser: async (newUser) => {
-//     try {
-//       const client = await mongoClient.connect();
-//       const user = client.db('kdt5').collection('user');
-//       await user.insertOne(newUser);
-//       return true;
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   },
-// };
-
-// module.exports = userDB;
 module.exports = registerUser;

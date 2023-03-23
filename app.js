@@ -16,6 +16,7 @@ const { PORT } = process.env; // 포트번호
 app.use(cors());
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('hojoon'));

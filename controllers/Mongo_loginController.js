@@ -1,9 +1,10 @@
-require('./mongooseConnect');
-const User = require('../models/user');
+const mongoClient = require('./mongoConnect');
 
 const login = async (req, res) => {
   try {
-    const duplicatedUser = await User.findOne({ id: req.body.id });
+    const client = await mongoClient.connect();
+    const user = client.db('kdt5').collection('user');
+    const duplicatedUser = await user.findOne({ id: req.body.id });
     // if (duplicatedUser) {
     //   if (duplicatedUser.password === req.body.password) {
     //     req.session.login = true;
