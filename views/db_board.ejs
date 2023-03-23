@@ -142,8 +142,8 @@
             <div class="foot">
               <% if(ARTICLE[i].USERID === userId) { %>
 
-              <a class="btn orange" href="/dbBoard/modify/<%= ARTICLE[i].ID_PK %>">수정</a>
-              <a class="btn blue" href="#" onclick="deleteArticle('<%= ARTICLE[i].ID_PK %>')">삭제</a>
+              <a class="btn orange" href="/dbBoard/modify/<%= ARTICLE[i]._id %>">수정</a>
+              <a class="btn blue" href="#" onclick="deleteArticle('<%= ARTICLE[i]._id %>')">삭제</a>
               <% } %>
             </div>
           </li>
@@ -158,16 +158,26 @@
   </div>
 </body>
 <script>
-  const deleteArticle = (id) => {
-    fetch(`http://localhost:5500/dbBoard/delete/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application/json"
-      }
-    }).then((res) => {
-      if (res.status === 200) location.reload();
-      // location.href = '/dbBoard';
+  // const deleteArticle = (_id) => {
+  //   fetch(`http://localhost:5500/dbBoard/delete/${_id}`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       "Content-type": "application/json"
+  //     }
+  //   }).then((res) => {
+  //     if (res.status === 200) location.reload();
+  //     // location.href = '/dbBoard';
+  //   })
+  // }
+  const deleteArticle = async (id) => {
+    const res = await fetch(`http://localhost:5500/dbBoard/delete/${id}`, {
+      method: "DELETE"
     })
+    // console.log(res)
+    if (res.status !== 200) return alert("삭제 실패")
+    const msg = await res.json();
+    // console.log(msg)
+    location.reload();
   }
 </script>
 

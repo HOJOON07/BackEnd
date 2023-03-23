@@ -44,7 +44,7 @@ const login = async (req, res) => {
       httpOnly: true,
       signed: true,
     });
-    res.stauts(200).send('로그인 성공');
+    res.redirect('/dbBoard');
   } catch (err) {
     res.status(400);
     res.send(
